@@ -58,7 +58,7 @@ class FileProviderService {
     private var networkProvider : FileProviderNetwork
     private var imageCache = NSCache<NSString, UIImage>()
     
-    init() {
+    public init() {
         networkProvider = FileProviderNetwork()
     }
     

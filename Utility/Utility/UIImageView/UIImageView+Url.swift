@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIImageView {
-    func loadImage(fromURL: URL?, defaultImage: UIImage? = nil) {
+    public func loadImage(fromURL: URL?, defaultImage: UIImage? = nil) {
         FileProviderService.service.imageView(self, loadImage: fromURL, defaultImage: defaultImage)
     }
 }
