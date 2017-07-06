@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FileProviderService {
+public class FileProviderService {
     private class FileProviderTask: Hashable, Equatable {
         typealias ImageObject = (imageView: UIImageView, defaultImage: UIImage?)
         var keyObject: [ImageObject]
@@ -62,7 +62,7 @@ class FileProviderService {
         networkProvider = FileProviderNetwork()
     }
     
-    func upload(filePath : String, destination: (url:String, name: String), completion:@escaping (Bool) ->()) {
+    public func upload(filePath : String, destination: (url:String, name: String), completion:@escaping (Bool) ->()) {
         guard FileManager.default.fileExists(atPath: filePath) else {
             completion(false)
             return
@@ -78,7 +78,7 @@ class FileProviderService {
         })
     }
     
-    func upload(image: UIImage, destination: (url:String, name: String), completion:@escaping (Bool) ->()) {
+    public func upload(image: UIImage, destination: (url:String, name: String), completion:@escaping (Bool) ->()) {
         guard let imageData = UIImageJPEGRepresentation(image, 0.8) else {
             completion(false)
             return
@@ -94,7 +94,7 @@ class FileProviderService {
         })
     }
     
-    private func getImage(baseURL: URL, completion: @escaping (UIImage?) -> ()) {
+    public func getImage(baseURL: URL, completion: @escaping (UIImage?) -> ()) {
         let urlString = baseURL.absoluteString as NSString
         
         if let cachedImage = imageCache.object(forKey: urlString) {
@@ -232,6 +232,6 @@ class FileProviderService {
 }
 
 extension FileProviderService {
-    static let service: FileProviderService = FileProviderService()
+    public static let service: FileProviderService = FileProviderService()
 }
 
