@@ -12,8 +12,12 @@ enum FileCacheType {
     case image
 }
 
-class FileProviderCache: NSObject {
-    class func applicationCache() -> URL {
+public protocol FileCache {
+    func imageCacheDirectory() -> URL
+}
+
+class FileProviderCache: NSObject, FileCache {
+    func applicationCache() -> URL {
         if let path = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).last {
             let final = path.appendingPathComponent("Utility").appendingPathComponent("Cache")
             return final
@@ -22,7 +26,7 @@ class FileProviderCache: NSObject {
         return URL(string: "Utility")!
     }
     
-    class func imageCacheDirectory() -> URL {
+    func imageCacheDirectory() -> URL {
         let source = self.applicationCache()
         let path = source.appendingPathComponent("Images")
         

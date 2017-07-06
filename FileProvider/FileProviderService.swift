@@ -8,6 +8,10 @@
 
 import UIKit
 
+enum FileProviderError : Error {
+    case noCacheSupport
+}
+
 class FileProviderService {
     private class FileProviderTask: Hashable, Equatable {
         typealias ImageObject = (imageView: UIImageView, defaultImage: UIImage?)
@@ -58,9 +62,13 @@ class FileProviderService {
     private var networkProvider : FileProviderNetwork
     private var imageCache = NSCache<NSString, UIImage>()
     
-    public init() {
+    public init(useDefaultCache: Bool = false) {
         networkProvider = FileProviderNetwork()
+        if useDefaultCache {
+            cache = FileProviderCache()
+        }
     }
+    public var cache: FileCache?
     
     func upload(filePath : String, destination: (url:String, name: String), completion:@escaping (Bool) ->()) {
         guard FileManager.default.fileExists(atPath: filePath) else {
@@ -94,16 +102,21 @@ class FileProviderService {
         })
     }
     
-    private func getImage(baseURL: URL, completion: @escaping (UIImage?) -> ()) {
+    private func getImage(baseURL: URL, enableLocalCache: Bool, completion: @escaping (UIImage?) -> ()) {
         let urlString = baseURL.absoluteString as NSString
         
-        if let cachedImage = imageCache.object(forKey: urlString) {
+        if let cachedImage = try? loadImage(key: urlString as String), enableLocalCache {
+            completion(cachedImage)
+        }else if let cachedImage = imageCache.object(forKey: urlString) {
             completion(cachedImage)
         }else {
             let task = networkProvider.downloadFile(fromURL: baseURL, destinationPath: nil, progress: nil, completion: { (filePath, error) in
                 if let imagePath = filePath, let image = UIImage(contentsOfFile: imagePath) {
                     completion(image)
                     self.imageCache.setObject(image, forKey: urlString)
+                    if enableLocalCache {
+                        try? self.cacheImage(image: image, for: urlString as String)
+                    }
                 }else {
                     completion(nil)
                 }
@@ -135,7 +148,7 @@ class FileProviderService {
     }
     
     //MARK: -- API
-    func imageView(_ imageView: UIImageView, loadImage imgURL: URL?, defaultImage: UIImage? = nil) -> () {
+    func imageView(_ imageView: UIImageView, loadImage imgURL: URL?, defaultImage: UIImage? = nil, enableLocalDiskCache option: Bool = false) -> () {
         guard let url = imgURL else {
             imageView.image = defaultImage
             return
@@ -168,7 +181,7 @@ class FileProviderService {
         }
         
         imageView.image = defaultImage
-        getImage(baseURL: url) { (image) in
+        getImage(baseURL: url, enableLocalCache: option) { (image) in
             if let discard = self.findTask(byKey: url.absoluteString) {
                 for object in discard.keyObject {
 //                    NSLog("Start update UI \(view) for url \(url)")
@@ -184,33 +197,35 @@ class FileProviderService {
     }
     
     // MARK: local file
-    private func putFile(data: Data, for key: String, with type: FileCacheType) {
+    private func cacheFile(data: Data, for key: String, with type: FileCacheType) throws {
+        guard let cache = cache else { throw  FileProviderError.noCacheSupport }
         if type == .image {
             let fileName = "\(key).png"
-            let dir = FileProviderCache.imageCacheDirectory()
+            let dir = cache.imageCacheDirectory()
             let fileURL = dir.appendingPathComponent(fileName)
             try? data.write(to: fileURL)
         }
     }
     
-    func putImage(image: UIImage, for key: String) {
+    func cacheImage(image: UIImage, for key: String) throws {
         if let imgData = UIImagePNGRepresentation(image) {
-            putFile(data: imgData, for: key, with: .image)
+            try cacheFile(data: imgData, for: key, with: .image)
         }
     }
     
-    private func loadFile(key: String, with type: FileCacheType) -> Data? {
+    private func loadCacheFile(key: String, with type: FileCacheType) throws -> Data? {
+        guard let cache = cache else { throw  FileProviderError.noCacheSupport }
         if type == .image {
             let fileName = "\(key).png"
-            let dir = FileProviderCache.imageCacheDirectory()
+            let dir = cache.imageCacheDirectory()
             let fileURL = dir.appendingPathComponent(fileName)
             return try? Data(contentsOf: fileURL)
         }
         return nil
     }
     
-    func loadImage(key: String) -> UIImage? {
-        if let data = loadFile(key: key, with: .image) {
+    func loadImage(key: String) throws -> UIImage?  {
+        if let data = try loadCacheFile(key: key, with: .image) {
             return UIImage(data: data)
         }
         
@@ -220,9 +235,10 @@ class FileProviderService {
     private func removeFile(key: String, with type: FileCacheType) {
         if type == .image {
             let fileName = "\(key).png"
-            let dir = FileProviderCache.imageCacheDirectory()
-            let fileURL = dir.appendingPathComponent(fileName)
-            try? FileManager.default.removeItem(at: fileURL)
+            if let dir = cache?.imageCacheDirectory() {
+                let fileURL = dir.appendingPathComponent(fileName)
+                try? FileManager.default.removeItem(at: fileURL)
+            }
         }
     }
     
