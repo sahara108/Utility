@@ -104,18 +104,19 @@ public class FileProviderService {
     
     public func getImage(baseURL: URL, enableLocalCache: Bool, completion: @escaping (UIImage?) -> ()) {
         let urlString = baseURL.absoluteString as NSString
+        let itemName = "\(urlString.hash)"
         
-        if let cachedImage = try? loadImage(key: urlString as String), enableLocalCache {
+        if let cachedImage = try? loadImage(key: itemName), cachedImage != nil, enableLocalCache {
             completion(cachedImage)
-        }else if let cachedImage = imageCache.object(forKey: urlString) {
+        }else if let cachedImage = imageCache.object(forKey: itemName as NSString) {
             completion(cachedImage)
         }else {
             let task = networkProvider.downloadFile(fromURL: baseURL, destinationPath: nil, progress: nil, completion: { (filePath, error) in
                 if let imagePath = filePath, let image = UIImage(contentsOfFile: imagePath) {
                     completion(image)
-                    self.imageCache.setObject(image, forKey: urlString)
+                    self.imageCache.setObject(image, forKey: itemName as NSString)
                     if enableLocalCache {
-                        try? self.cacheImage(image: image, for: urlString as String)
+                        try? self.cacheImage(image: image, for: itemName)
                     }
                 }else {
                     completion(nil)
@@ -219,6 +220,7 @@ public class FileProviderService {
             let fileName = "\(key).png"
             let dir = cache.imageCacheDirectory()
             let fileURL = dir.appendingPathComponent(fileName)
+            print(fileURL)
             return try? Data(contentsOf: fileURL)
         }
         return nil
