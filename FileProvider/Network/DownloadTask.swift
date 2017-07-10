@@ -31,7 +31,7 @@ public class DownloadTask : Operation, URLSessionDataDelegate {
         if let output = destinationPath {
             expectedFilePath = output
         }else {
-            expectedFilePath = tmpURL.appendingPathComponent("\(downloadURL.hashValue)")
+            expectedFilePath = tmpURL.appendingPathComponent("\(abs(downloadURL.hashValue))\(arc4random()%100)")
         }
         
         super.init()
@@ -82,12 +82,14 @@ public class DownloadTask : Operation, URLSessionDataDelegate {
     //MARK
     private var lastP: Float = 0
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        totalReceived = totalReceived.advanced(by: data.count)
+        downloadFileHandle?.write(data)
+        
         guard expectedLength > 0 else {
             return
         }
-        totalReceived = totalReceived.advanced(by: data.count)
+        
         lastP = Float(totalReceived) / Float(expectedLength) * 100
-        downloadFileHandle?.write(data)
         debounceProgress?()
     }
     

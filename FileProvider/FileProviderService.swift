@@ -104,7 +104,7 @@ public class FileProviderService {
     
     public func getImage(baseURL: URL, enableLocalCache: Bool, completion: @escaping (UIImage?) -> ()) {
         let urlString = baseURL.absoluteString as NSString
-        let itemName = "\(urlString.hash)"
+        let itemName = "\(baseURL.lastPathComponent)\(urlString.hash)"
         
         if let cachedImage = try? loadImage(key: itemName), cachedImage != nil, enableLocalCache {
             completion(cachedImage)
