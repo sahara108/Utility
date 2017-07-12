@@ -126,6 +126,19 @@ public class FileProviderService {
         }
     }
     
+    public func localFileCache(ofURL url: URL) -> URL? {
+        let urlString = url.absoluteString as NSString
+        let itemName = "\(url.lastPathComponent)\(urlString.hash)"
+        do {
+            let localFile = try loadImagePath(key: itemName)
+            return localFile
+        }catch {
+            
+        }
+        
+        return nil
+    }
+    
     private var pendingFileTasks: Set<FileProviderTask> = Set()
     private var discardableImageQuestQueue: Set<UIImageView> = Set()
     
@@ -226,12 +239,28 @@ public class FileProviderService {
         return nil
     }
     
+    private func loadlocalFilePath(key: String, with type: FileCacheType) throws -> URL? {
+        guard let cache = cache else { throw  FileProviderError.noCacheSupport }
+        if type == .image {
+            let fileName = "\(key).png"
+            let dir = cache.imageCacheDirectory()
+            let fileURL = dir.appendingPathComponent(fileName)
+            return FileManager.default.fileExists(atPath: fileURL.path) ? fileURL : nil
+        }
+        
+        return nil
+    }
+    
     func loadImage(key: String) throws -> UIImage?  {
         if let data = try loadCacheFile(key: key, with: .image) {
             return UIImage(data: data)
         }
         
         return nil
+    }
+    
+    func loadImagePath(key: String) throws -> URL? {
+        return try loadlocalFilePath(key: key, with: .image)
     }
     
     private func removeFile(key: String, with type: FileCacheType) {
