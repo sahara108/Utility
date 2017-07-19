@@ -17,6 +17,9 @@
 		AB9CE3951F0CA4CA0064934B /* FileProviderCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB9CE3941F0CA4CA0064934B /* FileProviderCache.swift */; };
 		AB9CE3971F0CA5890064934B /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB9CE3961F0CA5890064934B /* Functions.swift */; };
 		AB9CE39A1F0CA6EE0064934B /* UIImageView+Url.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB9CE3991F0CA6EE0064934B /* UIImageView+Url.swift */; };
+		ABAC14D71F1F56ED00D9DBCF /* BECellDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABAC14D41F1F56ED00D9DBCF /* BECellDataSource.swift */; };
+		ABAC14D81F1F56ED00D9DBCF /* BEBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABAC14D51F1F56ED00D9DBCF /* BEBaseViewController.swift */; };
+		ABAC14D91F1F56ED00D9DBCF /* BECell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABAC14D61F1F56ED00D9DBCF /* BECell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +46,9 @@
 		AB9CE3941F0CA4CA0064934B /* FileProviderCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FileProviderCache.swift; path = Cache/FileProviderCache.swift; sourceTree = "<group>"; };
 		AB9CE3961F0CA5890064934B /* Functions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		AB9CE3991F0CA6EE0064934B /* UIImageView+Url.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIImageView+Url.swift"; path = "UIImageView/UIImageView+Url.swift"; sourceTree = "<group>"; };
+		ABAC14D41F1F56ED00D9DBCF /* BECellDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BECellDataSource.swift; sourceTree = "<group>"; };
+		ABAC14D51F1F56ED00D9DBCF /* BEBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BEBaseViewController.swift; sourceTree = "<group>"; };
+		ABAC14D61F1F56ED00D9DBCF /* BECell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BECell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +73,7 @@
 		AB9CE3651F0CA3780064934B = {
 			isa = PBXGroup;
 			children = (
+				ABAC14D31F1F56ED00D9DBCF /* Table */,
 				AB9CE3891F0CA38F0064934B /* FileProvider */,
 				AB9CE3711F0CA3780064934B /* Utility */,
 				AB9CE37C1F0CA3790064934B /* UtilityTests */,
@@ -138,6 +145,17 @@
 				AB9CE3991F0CA6EE0064934B /* UIImageView+Url.swift */,
 			);
 			name = UIImageView;
+			sourceTree = "<group>";
+		};
+		ABAC14D31F1F56ED00D9DBCF /* Table */ = {
+			isa = PBXGroup;
+			children = (
+				ABAC14D41F1F56ED00D9DBCF /* BECellDataSource.swift */,
+				ABAC14D51F1F56ED00D9DBCF /* BEBaseViewController.swift */,
+				ABAC14D61F1F56ED00D9DBCF /* BECell.swift */,
+			);
+			name = Table;
+			path = ../Table;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,9 +270,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ABAC14D91F1F56ED00D9DBCF /* BECell.swift in Sources */,
 				AB9CE38F1F0CA38F0064934B /* FileProviderService.swift in Sources */,
 				AB9CE39A1F0CA6EE0064934B /* UIImageView+Url.swift in Sources */,
+				ABAC14D81F1F56ED00D9DBCF /* BEBaseViewController.swift in Sources */,
 				AB9CE3911F0CA38F0064934B /* DownloadTask.swift in Sources */,
+				ABAC14D71F1F56ED00D9DBCF /* BECellDataSource.swift in Sources */,
 				AB9CE3951F0CA4CA0064934B /* FileProviderCache.swift in Sources */,
 				AB9CE3901F0CA38F0064934B /* FileProviderNetwork.swift in Sources */,
 				AB9CE3921F0CA38F0064934B /* UploadTask.swift in Sources */,
