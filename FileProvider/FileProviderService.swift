@@ -113,11 +113,11 @@ public class FileProviderService {
         }else {
             let task = networkProvider.downloadFile(fromURL: baseURL, destinationPath: nil, progress: nil, completion: { (filePath, error) in
                 if let imagePath = filePath, let image = UIImage(contentsOfFile: imagePath) {
-                    completion(image)
                     self.imageCache.setObject(image, forKey: itemName as NSString)
                     if enableLocalCache {
                         try? self.cacheImage(image: image, for: itemName)
                     }
+                    completion(image)
                 }else {
                     completion(nil)
                 }
