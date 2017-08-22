@@ -44,3 +44,20 @@ public func debounce(delay:Int, queue:DispatchQueue, action: @escaping (()->()))
         })
     }
 }
+
+public func debounceMilisecond(delay:Int, queue:DispatchQueue, action: @escaping (()->())) -> ()->() {
+    var lastFireTime = DispatchTime.now()
+    let dispatchDelay = DispatchTimeInterval.milliseconds(delay)
+    
+    return {
+        let dispatchTime: DispatchTime = lastFireTime + dispatchDelay
+        queue.asyncAfter(deadline: dispatchTime, execute: {
+            let when: DispatchTime = lastFireTime + dispatchDelay
+            let now = DispatchTime.now()
+            if now.rawValue >= when.rawValue {
+                lastFireTime = DispatchTime.now()
+                action()
+            }
+        })
+    }
+}
