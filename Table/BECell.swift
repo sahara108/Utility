@@ -17,7 +17,7 @@ public protocol BECellRenderImpl: BECellRender {
     func renderCell(data: CellData)
 }
 
-extension BECellRender where Self: BECellRenderImpl {
+public extension BECellRender where Self: BECellRenderImpl {
     func renderCell(data: BECellDataSource) {
         if let d = data as? CellData {
             renderCell(data: d)
