@@ -34,7 +34,7 @@ class FileProviderCache: NSObject, FileCache {
             #if os(OSX)
                 try! NSFileManager.defaultManager().createDirectoryAtURL(path, withIntermediateDirectories: true, attributes: nil)
             #else
-                try! FileManager.default.createDirectory(at: path, withIntermediateDirectories: true, attributes: [FileAttributeKey.protectionKey.rawValue : FileProtectionType.completeUntilFirstUserAuthentication])
+                try! FileManager.default.createDirectory(at: path, withIntermediateDirectories: true, attributes: [FileAttributeKey(rawValue: FileAttributeKey.protectionKey.rawValue) : FileProtectionType.completeUntilFirstUserAuthentication])
             #endif
             
         }
