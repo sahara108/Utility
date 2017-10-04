@@ -1,9 +1,9 @@
 //
 //  UploadTask.swift
-//  annase-messager-ios-poc
+//  cacom.info
 //
 //  Created by Nguyen Tuan on 3/16/17.
-//  Copyright © 2017 Shizzle. All rights reserved.
+//  Copyright © 2017 Cacom.info. All rights reserved.
 //
 
 public class DownloadTask : Operation, URLSessionDataDelegate {
