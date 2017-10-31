@@ -46,7 +46,7 @@ class TableBotomActivityView: UIView {
     }
 }
 
-extension UITableView {
+extension UIScrollView {
     
     private func bottomActivityView() -> TableBotomActivityView? {
         return viewWithTag(10001) as? TableBotomActivityView
@@ -62,7 +62,13 @@ extension UITableView {
         let bottomView = TableBotomActivityView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 60))
         bottomView.tag = 10001
         bottomView.action = loadMore
-        self.tableFooterView = bottomView
+        
+        if let tableview = self as? UITableView {
+            tableview.tableFooterView = bottomView
+        }else {
+            self.insertSubview(bottomView, at: 0)
+            bottomView.isHidden = true
+        }
         
         self.addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
         
@@ -73,7 +79,9 @@ extension UITableView {
         if let v = bottomActivityView() {
             v.removeFromSuperview()
             self.removeObserver(self, forKeyPath: "contentOffset")
-            self.tableFooterView = UIView()
+            if let tableview = self as? UITableView {
+                tableview.tableFooterView = UIView()
+            }
         }
     }
     
