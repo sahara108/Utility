@@ -18,7 +18,7 @@ class TableBotomActivityView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        activityView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+      activityView = UIActivityIndicatorView(style: .gray)
         activityView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(activityView)
         

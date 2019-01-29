@@ -16,16 +16,26 @@ public enum FileProviderNetworkError: CustomNSError {
     case uploadFail
 }
 
-open class FileProviderNetwork {
+public protocol FileProviderNetwork {
+  typealias FTPProgressReport = (Float) -> ()
+  typealias FTPFinalResport = (String?, FileProviderNetworkError?) -> ()
+  
+  @discardableResult
+  func startUploadFile(filePath: URL, toURL: URL, given objectName: String, progress: FTPProgressReport?, completion: FTPFinalResport?) -> UploadTask
+  @discardableResult
+  func startUpload(data: Data, toURL: URL, given objectName: String, progress: FTPProgressReport?, completion: FTPFinalResport?) -> UploadTask
+  @discardableResult
+  func downloadFile(fromURL: URL, destinationPath: URL?, progress: FTPProgressReport?, completion: FTPFinalResport?) -> DownloadTask
+  func wipe()
+}
+
+public class FileProviderNetworkImpl: FileProviderNetwork {
     private var uploadQueue = OperationQueue()
     private var downloadQueue = OperationQueue()
-    
-    public typealias FTPProgressReport = (Float) -> ()
-    public typealias FTPFinalResport = (String?, FileProviderNetworkError?) -> ()
-    
-    public init() {
-        uploadQueue.maxConcurrentOperationCount = 2
-        downloadQueue.maxConcurrentOperationCount = 2
+  
+    init() {
+      uploadQueue.maxConcurrentOperationCount = 2
+      downloadQueue.maxConcurrentOperationCount = 2
     }
     
     
@@ -38,7 +48,7 @@ open class FileProviderNetwork {
     ///   - progress: report about uploading progress
     ///   - completion: end of uploading progress. See `FTPFinalResport`
     @discardableResult
-    open func startUploadFile(filePath: URL, toURL: URL, given objectName: String, progress: FTPProgressReport?, completion: FTPFinalResport?) -> UploadTask {
+    public func startUploadFile(filePath: URL, toURL: URL, given objectName: String, progress: FTPProgressReport?, completion: FTPFinalResport?) -> UploadTask {
         let task = UploadTask(fileURL: filePath, toURL: toURL, progress: progress, completion: completion)
         task.postedValue = objectName
         uploadQueue.addOperation(task)
@@ -55,7 +65,7 @@ open class FileProviderNetwork {
     ///   - progress: report about uploading progress
     ///   - completion: end of uploading progress. See `FTPFinalResport`
     @discardableResult
-    open func startUpload(data: Data, toURL: URL, given objectName: String, progress: FTPProgressReport?, completion: FTPFinalResport?) -> UploadTask {
+    public func startUpload(data: Data, toURL: URL, given objectName: String, progress: FTPProgressReport?, completion: FTPFinalResport?) -> UploadTask {
         let task = UploadTask(fileData: data, toURL: toURL, progress: progress, completion: completion)
         task.postedValue = objectName
         uploadQueue.addOperation(task)
@@ -72,14 +82,14 @@ open class FileProviderNetwork {
     ///   - progress: report about downloading progress
     ///   - completion: end of downloading progress.
     @discardableResult
-    open func downloadFile(fromURL: URL, destinationPath: URL?, progress: FTPProgressReport?, completion: FTPFinalResport?) -> DownloadTask {
+    public func downloadFile(fromURL: URL, destinationPath: URL?, progress: FTPProgressReport?, completion: FTPFinalResport?) -> DownloadTask {
         let task = DownloadTask(downloadURL: fromURL, destinationPath: destinationPath, progress: progress, completion: completion)
         downloadQueue.addOperation(task)
         
         return task
     }
     
-    open func wipe() {
+    public func wipe() {
         uploadQueue.cancelAllOperations()
         downloadQueue.cancelAllOperations()
     }
